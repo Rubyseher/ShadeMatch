@@ -1,11 +1,16 @@
 import './App.css'
+import Home from './screens/Home'
+import Trial from './screens/Trial'
+import { BrowserRouter,Routes, Route } from 'react-router-dom'
 
 function App() {
-
   return (
-    <div id="app-root">
-        hi
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/trial" element={<Trial />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

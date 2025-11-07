@@ -5,7 +5,6 @@ export default function Trial (){
     return(
         <div>
             <HeaderAppBar/>
-            Trial
             <DragDrop/>
         </div>
     )

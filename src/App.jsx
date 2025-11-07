@@ -1,6 +1,6 @@
 import './App.css'
-import Home from './screens/Home'
-import Trial from './screens/Trial'
+import Home from './frontend/screens/Home'
+import Trial from './frontend/screens/Trial'
 import { BrowserRouter,Routes, Route } from 'react-router-dom'
 
 function App() {

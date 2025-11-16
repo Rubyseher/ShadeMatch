@@ -99,55 +99,97 @@ function swatchToHex(s) {
   return tinycolor(s).toHexString();
 }
 
+function simpleColorName(hex) {
+  const c = tinycolor(hex).toHsl();
+  if (!c) return "neutral";
+
+  // Very low saturation = grey scale
+  if (c.s < 0.2) {
+    if (c.l < 0.25) return "black";
+    if (c.l > 0.75) return "white";
+    return "grey";
+  }
+
+  const h = c.h; // 0–360
+
+  let base;
+  if (h < 15 || h >= 345) base = "red";
+  else if (h < 45) base = "orange";
+  else if (h < 70) base = "yellow";
+  else if (h < 160) base = "green";
+  else if (h < 200) base = "teal";
+  else if (h < 250) base = "blue";
+  else if (h < 290) base = "purple";
+  else if (h < 330) base = "pink";
+  else base = "brown";
+
+  // add light/dark prefix
+  if (c.l < 0.3) return `dark ${base}`;
+  if (c.l > 0.7) return `light ${base}`;
+  return base;
+}
+
 
 function fashionCombosFrom(hex, gender = "women") {
   const base = tinycolor(hex);
   const isDark = base.isDark();
 
-  // Classic neutral bottoms – safe for both men & women
   const DARK_BOTTOMS = [
-    "#111827", // near-black
-    "#1f2937", // dark navy/charcoal
-    "#374151", // slate
-    "#1e3a8a", // navy
+    "#111827",
+    "#1f2937",
+    "#374151",
+    "#1e3a8a",
   ];
 
   const LIGHT_BOTTOMS = [
-    "#e5e7eb", // light grey
-    "#d1d5db", // mid grey
-    "#f5f5f4", // off-white
-    "#d1b892", // beige / chino
-    "#c4a484", // khaki
+    "#e5e7eb",
+    "#d1d5db",
+    "#f5f5f4",
+    "#d1b892",
+    "#c4a484",
   ];
 
-  // Simple rule:
-  // - if top is dark → suggest lighter/medium bottoms
-  // - if top is light → suggest darker bottoms
-  const bottoms = isDark ? LIGHT_BOTTOMS : DARK_BOTTOMS;
+  const bottomHexes = isDark ? LIGHT_BOTTOMS : DARK_BOTTOMS;
 
-  // Shoe neutrals – basic sneaker & leather colours
-  const shoes = [
-    "#000000", // black
-    "#4b5563", // dark grey
-    "#f9fafb", // white / off-white
-    "#e5e7eb", // light grey / sneaker
-    "#b45309", // tan leather
-    "#78350f", // dark brown leather
+  const SHOE_HEXES = [
+    "#000000",
+    "#4b5563",
+    "#f9fafb",
+    "#e5e7eb",
+    "#b45309",
+    "#78350f",
   ];
 
-  // One accent colour: complementary but toned down
-  const accent = base
+  const bottoms = bottomHexes.map((h) => ({
+    hex: h,
+    name: simpleColorName(h),
+  }));
+
+  const shoes = SHOE_HEXES.map((h) => ({
+    hex: h,
+    name: simpleColorName(h),
+  }));
+
+  const accentHex = base
     .complement()
     .desaturate(40)
     .darken(10)
     .toHexString();
 
+  const accents = [
+    {
+      hex: accentHex,
+      name: simpleColorName(accentHex),
+    },
+  ];
+
   return {
     bottoms,
     shoes,
-    accents: [accent],
+    accents,
   };
 }
+
 
 
 function makeMyntraUrl(colorName, who, itemType) {
@@ -165,13 +207,9 @@ function makeMyntraUrl(colorName, who, itemType) {
 
 
 function buildMyntraLinks(hex, gender = "women") {
-  // Try to get a CSS color name from the hex
-  let colorName = tinycolor(hex).toName(); // e.g. "beige"
-  if (!colorName || colorName === "transparent") {
-    colorName = "beige"; // safe default
-  }
-
   const who = gender === "men" ? "men" : "women";
+
+  const colorName = simpleColorName(hex); // e.g. "dark green", "black", "beige"
 
   return [
     {
@@ -180,7 +218,7 @@ function buildMyntraLinks(hex, gender = "women") {
     },
     {
       category: "bottoms",
-      url: makeMyntraUrl(colorName, who, "jeans"), // or "pants"
+      url: makeMyntraUrl(colorName, who, "jeans"),
     },
     {
       category: "shoes",
@@ -188,6 +226,7 @@ function buildMyntraLinks(hex, gender = "women") {
     },
   ];
 }
+
 
 
 // --- start server ---

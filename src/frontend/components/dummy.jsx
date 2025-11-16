@@ -12,6 +12,7 @@ export default function ComboSuggestions({ imageFile }) {
   const [combos, setCombos] = useState(null);
   const [myntraLinks, setMyntraLinks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchColor, setSearchColor] = useState(null);
 
   // 1) Preview effect
   useEffect(() => {
@@ -57,8 +58,6 @@ export default function ComboSuggestions({ imageFile }) {
         setDominant(data.dominantColor);
         setPalette(Array.isArray(data.palette) ? data.palette : []);
         setCombos(data.combos || null);
-        console.log("combo is ", data.combos || null);
-
         setMyntraLinks(Array.isArray(data.myntra) ? data.myntra : []);
       } catch (e) {
         setError(e.message || "Couldn’t get suggestions.");
@@ -70,17 +69,37 @@ export default function ComboSuggestions({ imageFile }) {
     send();
   }, [imageFile]);
 
+  useEffect(() => {
+  if (combos && combos.bottoms && combos.bottoms.length > 0) {
+    setSearchColor(combos.bottoms[0].name); // e.g. "dark blue"
+  }
+}, [combos]);
+
+
   if (!imageFile) return null;
 
   const filteredLinks = selectedCategory == "all" ? myntraLinks : myntraLinks.filter((l) => l.category === selectedCategory);
 
-  const ColorLine = ({ label, hex }) => {
+  function uniqueByName(list = []) {
+    const map = new Map();
+    for (const item of list) {
+      if (!map.has(item.name)) {
+        map.set(item.name, item);
+      }
+    }
+    return Array.from(map.values());
+  }
+  const uniqueBottoms = uniqueByName(combos.bottoms);
+  const uniqueShoes = uniqueByName(combos.shoes);
+  const uniqueAccents = uniqueByName(combos.accents);
+
+  const ColorLine = ({ label, hex, text }) => {
     if (!hex) return null;
     return (
       <li className="combo-line">
         <span className="combo-label">{label}:</span>
         <span className="combo-chip" style={{ backgroundColor: hex }}></span>
-        <span className="combo-hex">{hex}</span>
+        <span className="combo-hex">{text || hex}</span>
       </li>
     );
   };
@@ -128,16 +147,22 @@ export default function ComboSuggestions({ imageFile }) {
             <>
               <h3 className="section-title">Suggested combinations</h3>
               <ul className="combos-list">
-                {(combos.bottoms || []).map((item) => (
-                  <ColorLine key={`bottom-${item.hex}`} label="Bottoms" hex={item.hex} />
+                {uniqueBottoms.map((item) => (
+                  <ColorLine
+                    key={`bottom-${item.name}`}
+                    label="Bottoms"
+                    hex={item.hex}
+                    text={item.name}
+                    // we'll add onClick in the next step
+                  />
                 ))}
 
-                {(combos.shoes || []).map((item) => (
-                  <ColorLine key={`shoe-${item.hex}`} label="Shoes" hex={item.hex} />
+                {uniqueShoes.map((item) => (
+                  <ColorLine key={`shoe-${item.name}`} label="Shoes" hex={item.hex} text={item.name} />
                 ))}
 
-                {(combos.accents || []).map((item) => (
-                  <ColorLine key={`accent-${item.hex}`} label="Accent" hex={item.hex} />
+                {uniqueAccents.map((item) => (
+                  <ColorLine key={`accent-${item.name}`} label="Accent" hex={item.hex} text={item.name} />
                 ))}
               </ul>
             </>

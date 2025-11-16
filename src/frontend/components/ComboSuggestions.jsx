@@ -74,13 +74,13 @@ export default function ComboSuggestions({ imageFile }) {
 
   const filteredLinks = selectedCategory == "all" ? myntraLinks : myntraLinks.filter((l) => l.category === selectedCategory);
 
-  const ColorLine = ({ label, hex }) => {
-    if (!hex) return null;
+  const ColorLine = ({ label, name, hex }) => {
+    if (!name) return null;
     return (
       <li className="combo-line">
         <span className="combo-label">{label}:</span>
         <span className="combo-chip" style={{ backgroundColor: hex }}></span>
-        <span className="combo-hex">{hex}</span>
+        <span className="combo-hex">{name}</span>
       </li>
     );
   };
@@ -129,15 +129,15 @@ export default function ComboSuggestions({ imageFile }) {
               <h3 className="section-title">Suggested combinations</h3>
               <ul className="combos-list">
                 {(combos.bottoms || []).map((item) => (
-                  <ColorLine key={`bottom-${item.hex}`} label="Bottoms" hex={item.hex} />
+                  <ColorLine key={`bottom-${item.hex}`} label="Bottoms" name={item.name} hex={item.hex} />
                 ))}
 
                 {(combos.shoes || []).map((item) => (
-                  <ColorLine key={`shoe-${item.hex}`} label="Shoes" hex={item.hex} />
+                  <ColorLine key={`shoe-${item.hex}`} label="Shoes" name={item.name} hex={item.hex} />
                 ))}
 
                 {(combos.accents || []).map((item) => (
-                  <ColorLine key={`accent-${item.hex}`} label="Accent" hex={item.hex} />
+                  <ColorLine key={`accent-${item.hex}`} label="Accent" name={item.name} hex={item.hex} />
                 ))}
               </ul>
             </>

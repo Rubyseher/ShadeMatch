@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../styles/comboSuggestions.css";
+import ToggleButtons from "./ToggleButtons";
 
 export default function ClothingLinks({ loading, error, combos, myntraLinks }) {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -27,6 +28,7 @@ export default function ClothingLinks({ loading, error, combos, myntraLinks }) {
     <div className="details-card">
       {loading && <p className="status-text">Analyzing colours…</p>}
       {error && <p className="status-text error-text">{error}</p>}
+      <ToggleButtons />
       {combos && (
         <>
           <h3 className="section-title">Suggested combinations</h3>

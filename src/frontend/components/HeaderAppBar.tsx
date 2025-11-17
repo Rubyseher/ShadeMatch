@@ -12,9 +12,11 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShirt, faCircle } from "@fortawesome/free-solid-svg-icons";
 
-const pages = ["Products", "Pricing", "Blog"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = ["Home", "Github"];
+const settings = ["Profile"];
 
 function HeaderAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -36,10 +38,12 @@ function HeaderAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: "black" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          <Box sx={{ width: "30px", height: "30px", backgroundColor: "white", display: "flex", mr: 2, borderRadius: "50%" , alignItems:'center',justifyContent:'center'}}>
+            <FontAwesomeIcon icon={faShirt} style={{color:'black'}}/>
+          </Box>
           <Typography
             variant="h6"
             noWrap

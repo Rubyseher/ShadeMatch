@@ -6,7 +6,7 @@
 body {
   margin: 0;
   background-color: #f4f6fa;
-  /* font-family:  "SF Pro Display", -apple-system, BlinkMacSystemFont, Inter, sans-serif; */
-  font-family: 'Courier New', Courier, monospace;
+  font-family:  -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, sans-serif;
+  /* font-family: 'Courier New', Courier, monospace; */
   font-weight: 700;
 }

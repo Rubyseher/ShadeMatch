@@ -6,8 +6,8 @@ export default function Trial() {
   return (
     <div>
       <ResponsiveDrawer />
-      <main className="">
-        <div className="max-w-3xl mx-auto">
+      <main className="ml-0 lg:ml-[200px]">
+        <div className="max-w-3xl mx-auto text-center">
           <section >
             <h1 className="text-4xl font-semibold leading-tight text-gray-900">
               Find the

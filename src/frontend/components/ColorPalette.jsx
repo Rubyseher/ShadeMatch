@@ -6,11 +6,13 @@ export default function ColorPalette({ imageUrl, dominant, palette }) {
       {imageUrl && <img src={imageUrl} alt="Uploaded clothing" className="preview-image" />}
 
       {dominant && (
-        <div className="dominant-row">
+        <>
           <span className="dominant-label">Dominant colour</span>
-          <div className="color-chip-big" style={{ backgroundColor: dominant }} />
-          <span className="hex-text">{dominant}</span>
-        </div>
+          <div className="dominant-row">
+            <div className="color-chip-big" style={{ backgroundColor: dominant }} />
+            <span className="hex-text">{dominant}</span>
+          </div>
+        </>
       )}
       {palette.length > 0 && (
         <div className="palette-row">

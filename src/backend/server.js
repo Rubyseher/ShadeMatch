@@ -31,9 +31,7 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
 
     const palette = await Vibrant.from(thumbBuf).getPalette();
 
-    const hexes = Object.values(palette)
-      .map(swatchToHex)
-      .filter(Boolean);
+    const hexes =  []; 
 
     // ---- NEW DOMINANT LOGIC ----
     const mainSwatch =
@@ -43,7 +41,7 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
       palette.LightVibrant ||
       Object.values(palette)[0];
 
-    const dominant = swatchToHex(mainSwatch) || "#808080";
+    const dominant = swatchToHex(mainSwatch);
     // CLEAN HEX for API
 const cleanHex = dominant.replace("#", "");
 

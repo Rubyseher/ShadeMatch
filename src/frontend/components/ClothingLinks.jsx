@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../styles/comboSuggestions.css";
 import ToggleButtons from "./ToggleButtons";
-import MenWomanToggle from './MenWomanToggle'
+import MenWomanToggle from "./MenWomanToggle";
 
 export default function ClothingLinks({ loading, error, combos, myntraLinks }) {
   const [selectedCategory, setSelectedCategory] = useState("tops");
@@ -31,8 +31,10 @@ export default function ClothingLinks({ loading, error, combos, myntraLinks }) {
       {error && <p className="status-text error-text">{error}</p>}
       {combos && (
         <>
-          <ToggleButtons />
-          <MenWomanToggle sx={{ m: 1 }} defaultChecked />
+          <div className="flex mt-2.5">
+            <ToggleButtons />
+            <MenWomanToggle sx={{ m: 1 }} defaultChecked />
+          </div>
 
           <h3 className="section-title">Suggested combinations</h3>
           <ul className="combos-list">

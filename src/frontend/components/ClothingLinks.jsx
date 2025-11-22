@@ -28,9 +28,10 @@ export default function ClothingLinks({ loading, error, combos, myntraLinks }) {
     <div className="details-card">
       {loading && <p className="status-text">Analyzing colours…</p>}
       {error && <p className="status-text error-text">{error}</p>}
-      <ToggleButtons />
       {combos && (
         <>
+          <ToggleButtons />
+
           <h3 className="section-title">Suggested combinations</h3>
           <ul className="combos-list">
             {(combos.bottoms || []).map((item) => (
@@ -52,13 +53,6 @@ export default function ClothingLinks({ loading, error, combos, myntraLinks }) {
       {myntraLinks.length > 0 && (
         <div className="myntra-section">
           <h3 className="section-title">Shop matching pieces</h3>
-
-          <div className="pill-row">
-            <CategoryPill label="All" value="all" selected={selectedCategory === "all"} onClick={setSelectedCategory} />
-            <CategoryPill label="Tops" value="tops" selected={selectedCategory === "tops"} onClick={setSelectedCategory} />
-            <CategoryPill label="Bottoms" value="bottoms" selected={selectedCategory === "bottoms"} onClick={setSelectedCategory} />
-            <CategoryPill label="Dresses" value="dresses" selected={selectedCategory === "dresses"} onClick={setSelectedCategory} />
-          </div>
 
           <div className="myntra-list">
             {filteredLinks.map((item) => (

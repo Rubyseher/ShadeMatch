@@ -29,6 +29,7 @@
 
 .preview-image {
   width: 100%;
+  margin-top: 10px;
   max-height: 260px;
   object-fit: contain;
   border-radius: 12px;
@@ -90,6 +91,7 @@
 .section-title {
   font-size: 1.1rem;
   font-weight: 600;
+  margin-top: 20px;
   margin-bottom: 0.75rem;
 }
 

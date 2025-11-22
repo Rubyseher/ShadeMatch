@@ -15,8 +15,8 @@ console.log(">>> RUNNING SERVER VERSION: v5 <<<");
 
 // 2) Multer should be defined early
 const upload = multer({
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 8 * 1024 * 1024 },
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024 },
 });
 
 // 3) FILE ROUTE FIRST
@@ -44,6 +44,16 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
       Object.values(palette)[0];
 
     const dominant = swatchToHex(mainSwatch) || "#808080";
+    // CLEAN HEX for API
+const cleanHex = dominant.replace("#", "");
+
+// HIT TheColorAPI
+const schemeRes = await fetch(`https://www.thecolorapi.com/scheme?hex=${cleanHex}&mode=triad&count=5`);
+const schemeData = await schemeRes.json();
+
+// EXTRACT hexes only
+const colorApiPalette = schemeData.colors.map(c => c.hex.value);
+
 
     // ---- NEW FASHION COMBOS ----
     const combos = fashionCombosFrom(dominant, "women");
@@ -57,6 +67,7 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
       palette: hexes,
       combos,
       myntra,
+      colorApiPalette
     });
 
   } catch (e) {
@@ -132,48 +143,106 @@ function simpleColorName(hex) {
 
 function fashionCombosFrom(hex, gender = "women") {
   const base = tinycolor(hex);
+  const hsl = base.toHsl();
   const isDark = base.isDark();
+  const isPastel = hsl.l > 0.65 && hsl.s > 0.2; // light & a bit colorful
 
-  const DARK_BOTTOMS = [
-    "#111827",
-    "#1f2937",
-    "#374151",
-    "#1e3a8a",
+  // Neutrals for bottoms
+  const DARK_NEUTRALS = [
+    "#111827", // near black
+    "#1f2937", // charcoal
+    "#0f172a", // deep navy
   ];
 
-  const LIGHT_BOTTOMS = [
-    "#e5e7eb",
-    "#d1d5db",
-    "#f5f5f4",
-    "#d1b892",
-    "#c4a484",
+  const MID_NEUTRALS = [
+    "#4b5563", // slate
+    "#6b7280", // grey
+    "#1d4ed8", // cobalt / denim-ish blue
   ];
 
-  const bottomHexes = isDark ? LIGHT_BOTTOMS : DARK_BOTTOMS;
-
-  const SHOE_HEXES = [
-    "#000000",
-    "#4b5563",
-    "#f9fafb",
-    "#e5e7eb",
-    "#b45309",
-    "#78350f",
+  const LIGHT_NEUTRALS = [
+    "#f9fafb", // almost white
+    "#e5e7eb", // light grey
+    "#f5f5f4", // warm off-white
+    "#d1b892", // beige
   ];
+
+  // --- BOTTOMS LOGIC ---
+  let bottomHexes;
+
+  if (isDark) {
+    // Dark top → suggest light & mid bottoms, with one dark option
+    bottomHexes = [
+      LIGHT_NEUTRALS[0], // near white
+      LIGHT_NEUTRALS[2], // off white
+      MID_NEUTRALS[0],   // slate
+      MID_NEUTRALS[1],   // grey
+      DARK_NEUTRALS[2],  // navy
+    ];
+  } else if (isPastel) {
+    // Soft/pastel top (like your pink example)
+    bottomHexes = [
+      DARK_NEUTRALS[2],  // navy
+      MID_NEUTRALS[0],   // slate
+      LIGHT_NEUTRALS[1], // light grey
+      LIGHT_NEUTRALS[3], // beige
+      LIGHT_NEUTRALS[0], // clean light
+    ];
+  } else {
+    // Mid-tone top → balanced mix
+    bottomHexes = [
+      DARK_NEUTRALS[1],  // charcoal
+      MID_NEUTRALS[0],   // slate
+      MID_NEUTRALS[2],   // denim blue
+      LIGHT_NEUTRALS[1], // light grey
+      LIGHT_NEUTRALS[2], // off white
+    ];
+  }
+
+  // One color bottom based on top: darker & desaturated
+  const toneOnToneBottom = base
+    .clone()
+    .darken(25)
+    .desaturate(35)
+    .toHexString();
+  bottomHexes.push(toneOnToneBottom);
 
   const bottoms = bottomHexes.map((h) => ({
     hex: h,
     name: simpleColorName(h),
   }));
 
-  const shoes = SHOE_HEXES.map((h) => ({
+  // --- SHOES LOGIC ---
+  // Neutral shoes that work with most outfits
+  const SHOE_NEUTRALS = [
+    "#111827", // black
+    "#4b5563", // charcoal
+    "#f5f5f4", // off white / cream (softer than pure white)
+    "#e5e7eb", // light grey
+    "#d1b892", // beige / tan
+    "#92400e", // rich brown
+  ];
+
+  // One shoe that softly echoes the top colour (for people who like matching)
+  const shoeMatchTop = base
+    .clone()
+    .desaturate(40)
+    .darken(5)
+    .toHexString();
+
+  const shoeHexes = [...SHOE_NEUTRALS, shoeMatchTop];
+
+  const shoes = shoeHexes.map((h) => ({
     hex: h,
     name: simpleColorName(h),
   }));
 
+  // --- ACCENTS (bags, jewellery, caps, etc.) ---
   const accentHex = base
+    .clone()
     .complement()
-    .desaturate(40)
-    .darken(10)
+    .desaturate(35)
+    .darken(5)
     .toHexString();
 
   const accents = [
@@ -184,13 +253,12 @@ function fashionCombosFrom(hex, gender = "women") {
   ];
 
   return {
+    tops: [], // you can fill this later if needed
     bottoms,
     shoes,
     accents,
   };
 }
-
-
 
 function makeMyntraUrl(colorName, who, itemType) {
   // slug part: beige-women-top

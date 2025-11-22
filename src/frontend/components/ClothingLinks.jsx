@@ -1,9 +1,10 @@
 import { useState } from "react";
 import "../styles/comboSuggestions.css";
 import ToggleButtons from "./ToggleButtons";
+import MenWomanToggle from './MenWomanToggle'
 
 export default function ClothingLinks({ loading, error, combos, myntraLinks }) {
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("tops");
   const filteredLinks = selectedCategory == "all" ? myntraLinks : myntraLinks.filter((l) => l.category === selectedCategory);
   const ColorLine = ({ label, name, hex }) => {
     if (!name) return null;
@@ -31,6 +32,7 @@ export default function ClothingLinks({ loading, error, combos, myntraLinks }) {
       {combos && (
         <>
           <ToggleButtons />
+          <MenWomanToggle sx={{ m: 1 }} defaultChecked />
 
           <h3 className="section-title">Suggested combinations</h3>
           <ul className="combos-list">

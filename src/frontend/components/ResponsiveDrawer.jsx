@@ -46,7 +46,7 @@ function ResponsiveDrawer(props) {
       <Toolbar />
       <Divider />
       <List>
-        {["History 1", "History 1", "History 1", "History 1"].map((text) => (
+        {["History 1", "History 2", "History 3", "History 4"].map((text) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemText primary={text} />

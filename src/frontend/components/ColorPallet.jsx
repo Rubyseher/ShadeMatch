@@ -4,8 +4,8 @@ import ToggleButtons from "./Utilities/ToggleButtons";
 import MenWomanToggle from "./Utilities/MenWomanToggle";
 
 export default function ColorPallet({ loading, error, combos, myntraLinks }) {
-  const [selectedCategory, setSelectedCategory] = useState("tops");
-  const filteredLinks = selectedCategory == "all" ? myntraLinks : myntraLinks.filter((l) => l.category === selectedCategory);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const filteredLinks = selectedCategory == "tops" ? myntraLinks : myntraLinks.filter((l) => l.category === selectedCategory);
   const ColorLine = ({ label, name, hex }) => {
     if (!name) return null;
     return (
@@ -17,6 +17,11 @@ export default function ColorPallet({ loading, error, combos, myntraLinks }) {
     );
   };
 
+  const handleSelectedCategory = (v)=>{
+    console.log(v)
+    setSelectedCategory(v)
+  }
+
   return (
     <div className="details-card">
       {loading && <p className="status-text">Analyzing colours…</p>}
@@ -24,24 +29,18 @@ export default function ColorPallet({ loading, error, combos, myntraLinks }) {
       {combos && (
         <>
           <div className="flex mt-2.5">
-            <ToggleButtons />
+            <ToggleButtons value={selectedCategory} onChange={(v)=>handleSelectedCategory(v)} />
             <MenWomanToggle sx={{ m: 1 }} defaultChecked />
           </div>
 
           <h3 className="section-title">Suggested combinations</h3>
-          <ul className="combos-list">
-            {(combos.bottoms || []).map((item) => (
-              <ColorLine key={`bottom-${item.hex}`} label="Bottoms" name={item.name} hex={item.hex} />
-            ))}
-
-            {(combos.shoes || []).map((item) => (
-              <ColorLine key={`shoe-${item.hex}`} label="Shoes" name={item.name} hex={item.hex} />
-            ))}
-
-            {(combos.accents || []).map((item) => (
-              <ColorLine key={`accent-${item.hex}`} label="Accent" name={item.name} hex={item.hex} />
-            ))}
-          </ul>
+          { selectedCategory &&
+            <ul className="combos-list">
+              {(combos[selectedCategory] || []).map((item) => (
+                <ColorLine key={`${selectedCategory}-${item.hex}`}  label={`${selectedCategory}`} name={item.name} hex={item.hex} />
+              ))}
+            </ul>
+          }
         </>
       )}
 

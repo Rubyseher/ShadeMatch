@@ -2,16 +2,18 @@ import * as React from "react";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
-export default function ToggleButtons() {
-  const [alignment, setAlignment] = React.useState("bottoms");
+export default function ToggleButtons({value,onChange}) {
+  console.log("value is",value)
 
   const handleAlignment = (event, newAlignment) => {
-    setAlignment(newAlignment);
+    if(newAlignment!==null && onChange)
+      console.log("newAlignment", newAlignment)
+      onChange(newAlignment)
   };
 
   return (
     <ToggleButtonGroup
-      value={alignment}
+      value={value}
       exclusive
       onChange={handleAlignment}
       aria-label="text alignment"

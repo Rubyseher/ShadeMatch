@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import multer from "multer";
 import sharp from "sharp";
-import {pickDominantSwatch,swatchToHex,fashionCombosFrom,buildMyntraLinks} from './utilities.js'
+import {pickDominantSwatch,swatchToHex,fashionCombosFrom,buildMyntraLinks,fetchColorSchemes} from './utilities.js'
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const { Vibrant } = require("node-vibrant/node");
@@ -38,14 +38,8 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
     const dominant = swatchToHex(mainSwatch) || "#808080";
 
     // CLEAN HEX for API
-    const cleanHex = dominant.replace("#", "");
-
-    // HIT TheColorAPI
-    const schemeRes = await fetch(`https://www.thecolorapi.com/scheme?hex=${cleanHex}&mode=triad&count=5`);
-    const schemeData = await schemeRes.json();
-
-    // EXTRACT hexes only
-    const colorApiPalette = schemeData.colors.map(c => c.hex.value);
+    const colorApiSchemes= await fetchColorSchemes(dominant)
+    const colorApiPalette = colorApiSchemes || []
 
     // ---- NEW FASHION COMBOS ----
     const combos = fashionCombosFrom(dominant, "women");

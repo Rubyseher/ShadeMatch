@@ -1,4 +1,14 @@
 import tinycolor from "tinycolor2";
+const COLOR_API_MODES = [
+  "monochrome",
+  "monochrome-dark",
+  "monochrome-light",
+  "analogic",
+  "complement",
+  "analogic-complement",
+  "triad",
+  "quad",
+];
 
 function pickDominantSwatch(palette) {
   const swatches = Object.values(palette).filter(Boolean);
@@ -10,13 +20,31 @@ function pickDominantSwatch(palette) {
   }, null);
 }
 
-function fetchColorSchemes(cleanHex) {
-  let COLOR_API_MODES = ["monochrome", "monochrome-dark", "monochrome-light", "analogic", "complement", "analogic-complement", "triad", "quad"]
-  COLOR_API_MODES.forEach((item, index) => {
-    const schemeRes = await fetch(`https://www.thecolorapi.com/scheme?hex=${cleanHex}&mode=${item}&count=5`);
-    const schemeData = await schemeRes.json();
-    
-  })
+async function fetchColorSchemes(hex, modes = COLOR_API_MODES, count = 5) {
+  const cleanHex = hex.replace("#", "");
+
+  const getAllColorAPIData = await Promise.all(
+    modes.map(async (mode) => {
+      const res = await fetch(`https://www.thecolorapi.com/scheme?hex=${cleanHex}&mode=${mode}&count=5`);
+
+      if (!res.ok) throw new Error(`color api mode failed: ${mode}`)
+      const data = await res.json()
+      console.log(data);
+
+      const extractedColors = (data.colors || []).map((color) => color.hex.value)
+      console.log(extractedColors);
+
+      return { mode,extractedColors };
+    })
+  )
+
+  const finalColors = getAllColorAPIData.reduce((colors,{mode,extractedColors}) => {
+    colors[mode]=extractedColors
+    return colors
+  },{})
+  console.log(finalColors)
+  return finalColors
+
 }
 
 // --- helper functions ---

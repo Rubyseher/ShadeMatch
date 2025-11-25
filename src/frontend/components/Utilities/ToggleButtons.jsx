@@ -2,19 +2,21 @@ import * as React from "react";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
-export default function ToggleButtons({ selectedCategory, onChange }) {
-  console.log("selectedCategory is", selectedCategory);
+export default function ToggleButtons({ value , options=[], onChange }) {
+  
+  console.log("options is", options);
+  console.log("value is", value);
 
-  const handleAlignment = (event, newAlignment) => {
-    if (newAlignment !== null && onChange) {
-      console.log("newAlignment", newAlignment);
-      onChange(newAlignment);
+  const handleAlignment = (event, newOption) => {
+    if (newOption !== null && onChange) {
+      console.log("newOption", newOption);
+      onChange(newOption);
     }
   };
 
   return (
     <ToggleButtonGroup
-      value={selectedCategory}
+      value={value}
       exclusive
       onChange={handleAlignment}
       aria-label="text alignment"
@@ -47,15 +49,11 @@ export default function ToggleButtons({ selectedCategory, onChange }) {
       }}
       // style={{marginTop:'10px', borderRadius:'30px'}}
     >
-      <ToggleButton value="tops" aria-label="tops">
-        Tops
-      </ToggleButton>
-      <ToggleButton value="bottoms" aria-label="bottoms">
-        Bottoms
-      </ToggleButton>
-      <ToggleButton value="shoes" aria-label="shoes">
-        Shoes
-      </ToggleButton>
+      {options.map((item) => {
+        <ToggleButton key={item.value}  value={item.value} aria-label={item.label}>
+          {item.label}
+        </ToggleButton>;
+      })}
     </ToggleButtonGroup>
   );
 }

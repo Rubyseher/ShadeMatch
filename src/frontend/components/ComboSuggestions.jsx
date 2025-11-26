@@ -7,7 +7,7 @@ export default function ComboSuggestions({ imageFile }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [colorApiPalette, setColorApiPalette] = useState([]);
+  const [colorApiPalette, setColorApiPalette] = useState({});
   const [dominant, setDominant] = useState(null);
   const [palette, setPalette] = useState([]);
   const [neutrals, setNeutrals] = useState(null);
@@ -30,7 +30,7 @@ export default function ComboSuggestions({ imageFile }) {
     async function send() {
       setLoading(true);
       setError(null);
-      setColorApiPalette([]);
+      setColorApiPalette({});
       setDominant(null);
       setPalette([]);
       setNeutrals(null);
@@ -55,10 +55,9 @@ export default function ComboSuggestions({ imageFile }) {
         if (!res.ok) throw new Error(data.error || `Http.${res.status}`);
 
         setDominant(data.dominantColor);
-        setColorApiPalette(data.colorApiPalette)
+        setColorApiPalette(data.colorApiPalette || {})
         setPalette(Array.isArray(data.palette) ? data.palette : []);
         setNeutrals(data.combos || null);
-        console.log("colorApiPalette is ", data.colorApiPalette || null);
 
         setMyntraLinks(Array.isArray(data.myntra) ? data.myntra : []);
       } catch (e) {

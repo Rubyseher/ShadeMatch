@@ -39,7 +39,7 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
 
     // CLEAN HEX for API
     const colorApiSchemes= await fetchColorSchemes(dominant)
-    const colorApiPalette = colorApiSchemes || []
+    const colorApiPalette = colorApiSchemes || {}
 
     // ---- NEW FASHION COMBOS ----
     const combos = fashionCombosFrom(dominant, "women");

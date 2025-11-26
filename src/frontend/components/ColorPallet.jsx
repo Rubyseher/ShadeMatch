@@ -22,6 +22,7 @@ export default function ColorPallet({ loading, error, neutrals, myntraLinks, col
     { value: "quad", label: "Quad" },
     { value: "triad", label: "Triad" },
   ];
+console.log("colorApiPalette",colorApiPalette);
 
   const filteredLinks = myntraLinks.filter((l) => l.category === selectedCategory);
   const ColorLine = ({ name, hex }) => {
@@ -65,23 +66,25 @@ export default function ColorPallet({ loading, error, neutrals, myntraLinks, col
       </div>
       <div className="details-card details-card--full">
         {/* 🔽 NEW: Myntra section */}
-        {myntraLinks.length > 0 && (
+        {selectedMode && Object.keys(colorApiPalette || {}).length > 0 && (
           <div className="myntra-section ">
-            <h3 className="section-title">
-              MORE COMBINATIONS
-              <ToggleButtons
-                value={selectedMode}
-                options={modeOptions}
-                onChange={(v) => setSelectedMode(v)}
-                wrap
-                center
-              />
-            </h3>
+            <h3 className="section-title">MORE COMBINATIONS</h3>
+            <div className="toggle-row">
+              <ToggleButtons value={selectedMode} options={modeOptions} onChange={(v) => setSelectedMode(v)} wrap center />
+            </div>
+            <ul className="combos-list">
+              {(colorApiPalette[selectedMode] || []).map((hex) => (
+                <li key={`${selectedMode}-${hex}`} className="combo-line">
+                  <span className="combo-chip" style={{ backgroundColor: hex }} />
+                  <span className="combo-hex">{hex}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
-      <div className="details-card details-card--full">
-        {/* 🔽 NEW: Myntra section */}
+
+      {/* <div className="details-card details-card--full">
         {myntraLinks.length > 0 && (
           <div className="myntra-section ">
             <h3 className="section-title">links</h3>
@@ -96,7 +99,7 @@ export default function ColorPallet({ loading, error, neutrals, myntraLinks, col
             </div>
           </div>
         )}
-      </div>
+      </div> */}
     </>
   );
 }

@@ -20,12 +20,12 @@ function pickDominantSwatch(palette) {
   }, null);
 }
 
-async function fetchColorSchemes(hex, modes = COLOR_API_MODES, count = 5) {
+async function fetchColorSchemes(hex, modes = COLOR_API_MODES, count = 6) {
   const cleanHex = hex.replace("#", "");
 
   const getAllColorAPIData = await Promise.allSettled(
     modes.map(async (mode) => {
-      const res = await fetch(`https://www.thecolorapi.com/scheme?hex=${cleanHex}&mode=${mode}&count=5`);
+      const res = await fetch(`https://www.thecolorapi.com/scheme?hex=${cleanHex}&mode=${mode}&count=${count}`);
 
       if (!res.ok) throw new Error(`color api mode failed: ${mode}`)
       const data = await res.json()

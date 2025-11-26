@@ -13,13 +13,14 @@ export default function ColorPallet({ loading, error, neutrals, myntraLinks, col
     { value: "shoes", label: "Shoes" },
   ];
   const modeOptions = [
-    { value: "analogic", label: "Analog" },
+    { value: "analogic", label: "analogic" },
+    { value: "analogic-complement", label: "Analogic Complement" },
+    { value: "complement", label: "Complement" },
     { value: "monochrome", label: "Monochrome" },
-    { value: "quad", label: "Quad" },
     { value: "monochrome-dark", label: "Mono Dark" },
     { value: "monochrome-light", label: "Mono Light" },
-    { value: "complement", label: "Complement" },
-    { value: "analogic-complement", label: "Analog Complement" },
+    { value: "quad", label: "Quad" },
+    { value: "triad", label: "Triad" },
   ];
 
   const filteredLinks = myntraLinks.filter((l) => l.category === selectedCategory);
@@ -41,11 +42,17 @@ export default function ColorPallet({ loading, error, neutrals, myntraLinks, col
         {neutrals && (
           <>
             <div className="flex mt-2.5">
-              <ToggleButtons value={selectedCategory} options={categoryOptions} onChange={(v) => setSelectedCategory(v)} />
+              <ToggleButtons
+                value={selectedCategory}
+                options={categoryOptions}
+                onChange={(v) => setSelectedCategory(v)}
+                wrap={false}
+                center={false}
+              />
               <MenWomanToggle sx={{ m: 1 }} defaultChecked />
             </div>
 
-            <h3 className="section-title">Neutrals</h3>
+            <h3 className="section-title">NEUTRALS</h3>
             {selectedCategory && (
               <ul className="combos-list">
                 {(neutrals[selectedCategory] || []).map((item) => (
@@ -61,8 +68,14 @@ export default function ColorPallet({ loading, error, neutrals, myntraLinks, col
         {myntraLinks.length > 0 && (
           <div className="myntra-section ">
             <h3 className="section-title">
-              More Combinations
-              <ToggleButtons value={selectedMode} options={modeOptions} onChange={(v) => setSelectedMode(v)} />
+              MORE COMBINATIONS
+              <ToggleButtons
+                value={selectedMode}
+                options={modeOptions}
+                onChange={(v) => setSelectedMode(v)}
+                wrap
+                center
+              />
             </h3>
           </div>
         )}

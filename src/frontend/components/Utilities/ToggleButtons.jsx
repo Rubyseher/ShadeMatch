@@ -2,11 +2,7 @@ import * as React from "react";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
-export default function ToggleButtons({ value , options=[], onChange }) {
-  
-  console.log("options is", options);
-  console.log("value is", value);
-
+export default function ToggleButtons({ value, options = [], onChange, wrap = false, center = false }) {
   const handleAlignment = (event, newOption) => {
     if (newOption !== null && onChange) {
       console.log("newOption", newOption);
@@ -22,7 +18,9 @@ export default function ToggleButtons({ value , options=[], onChange }) {
       aria-label="text alignment"
       sx={{
         borderRadius: "99px",
-        // backgroundColor: "#f3f4f6",
+        display: "flex",
+        flexWrap: wrap ? "wrap" : "nowrap",
+        justifyContent: center ? "center" : "flex-start",
         padding: "4px",
         // remove the default group borders
         "& .MuiToggleButtonGroup-grouped": {
@@ -50,7 +48,7 @@ export default function ToggleButtons({ value , options=[], onChange }) {
       // style={{marginTop:'10px', borderRadius:'30px'}}
     >
       {options.map((item) => (
-        <ToggleButton key={item.value}  value={item.value} aria-label={item.label}>
+        <ToggleButton key={item.value} value={item.value} aria-label={item.label}>
           {item.label}
         </ToggleButton>
       ))}

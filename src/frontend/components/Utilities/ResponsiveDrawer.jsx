@@ -88,7 +88,7 @@ function ResponsiveDrawer(props) {
             </Box>
           </Typography>
           <Typography sx={{fontWeight:800, fontFamily:"-apple-system"}}>
-            STYLE MATCH
+            ATTIRO
           </Typography>
         </Toolbar>
       </AppBar>

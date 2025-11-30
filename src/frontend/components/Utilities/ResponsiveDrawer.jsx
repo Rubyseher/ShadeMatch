@@ -14,7 +14,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import logo from "../../../assets/attiro.png";
+import logo from "../../../assets/logo.svg";
 import useClosetHistory from "./useClosetHistory";
 
 const drawerWidth = 200;
@@ -114,12 +114,11 @@ function ResponsiveDrawer(props) {
           <Typography variant="h6" noWrap component="div">
             <Box
               sx={{
-                width: 40,
-                height: 40,
-                backgroundColor: "white",
+                width: 50,
+                height: 50,
+                // backgroundColor: "white",
                 display: "flex",
                 mr: 2,
-                borderRadius: "50%",
                 alignItems: "center",
                 justifyContent: "center",
               }}

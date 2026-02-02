@@ -1,51 +1,68 @@
-import { useEffect, useReducer } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const HISTORY_STORAGE_KEY = "closet-history";
+const EVENT_KEY = "closet_history_updated";
 
-const initHistory = () => {
+// Helper to read from storage safely
+const getStoredHistory = () => {
   try {
-    const parsed = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY) || "[]");
-    return { history: Array.isArray(parsed) ? parsed : [] };
-  } catch (e) {
-    console.log(e);
-    return { history: [] };
+    const item = window.localStorage.getItem(HISTORY_STORAGE_KEY);
+    return item ? JSON.parse(item) : [];
+  } catch (error) {
+    console.error("Error reading history:", error);
+    return [];
   }
 };
 
-function historyReducer(state, action) {
-  switch (action.type) {
-    case "ADD_ENTRY": {
-      const incoming = {
-        pinned: false,
-        createdAt: action.payload?.createdAt || new Date().toISOString(),
-        ...action.payload,
-      };
-      const existing = state.history.filter((h) => h.id !== incoming.id);
-      const next = [incoming, ...existing].slice(0, 10);
-      return { ...state, history: next };
-    }
-    case "DELETE_ENTRY":
-      return { ...state, history: state.history.filter((h) => h.id !== action.id) };
-    case "PIN_ENTRY": {
-      const next = state.history.map((h) => (h.id === action.id ? { ...h, pinned: !h.pinned } : h));
-      const pinned = next.filter((h) => h.pinned);
-      const unpinned = next.filter((h) => !h.pinned);
-      return { ...state, history: [...pinned, ...unpinned] };
-    }
-    default:
-      return state;
-  }
-}
 export default function useClosetHistory() {
-  const [state, dispatch] = useReducer(historyReducer, undefined, initHistory);
-  useEffect(() => {
-    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(state.history));
-  }, [state.history]);
+  // 1. Initialize state directly from LocalStorage
+  const [history, setHistory] = useState(getStoredHistory);
 
-  return {
-    history: state.history,
-    addHistory: (payload) => dispatch({ type: "ADD_ENTRY", payload }),
-    deleteEntry: (id) => dispatch({ type: "DELETE_ENTRY", id }),
-    togglePin: (id) => dispatch({ type: "PIN_ENTRY" ,id}),
+  // 2. Listen for updates from ANY component (or other tabs)
+  useEffect(() => {
+    const syncState = () => setHistory(getStoredHistory());
+
+    window.addEventListener(EVENT_KEY, syncState); // Listen for same-tab updates
+    window.addEventListener("storage", syncState); // Listen for cross-tab updates
+
+    return () => {
+      window.removeEventListener(EVENT_KEY, syncState);
+      window.removeEventListener("storage", syncState);
+    };
+  }, []);
+
+  // 3. Helper to write to storage and notify everyone
+  const updateStorage = (newHistory) => {
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(newHistory));
+    setHistory(newHistory);
+    window.dispatchEvent(new Event(EVENT_KEY)); // <--- This triggers the update in the Sidebar!
   };
+
+  const addHistory = useCallback((payload) => {
+    const current = getStoredHistory();
+    const incoming = {
+      pinned: false,
+      createdAt: payload?.createdAt || new Date().toISOString(),
+      ...payload,
+    };
+    const existing = current.filter((h) => h.id !== incoming.id);
+    const next = [incoming, ...existing].slice(0, 10);
+    updateStorage(next);
+  }, []);
+
+  const deleteEntry = useCallback((id) => {
+    const current = getStoredHistory();
+    const next = current.filter((h) => h.id !== id);
+    updateStorage(next);
+  }, []);
+
+  const togglePin = useCallback((id) => {
+    const current = getStoredHistory();
+    const next = current.map((h) => (h.id === id ? { ...h, pinned: !h.pinned } : h));
+    const pinned = next.filter((h) => h.pinned);
+    const unpinned = next.filter((h) => !h.pinned);
+    updateStorage([...pinned, ...unpinned]);
+  }, []);
+
+  return { history, addHistory, deleteEntry, togglePin };
 }

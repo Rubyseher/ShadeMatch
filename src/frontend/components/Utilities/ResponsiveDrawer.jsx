@@ -37,11 +37,6 @@ function ResponsiveDrawer(props) {
     setIsClosing(true);
     setMobileOpen(false);
   };
-  const handleDrawerToggle = () => {
-    if (!isClosing) {
-      setMobileOpen((open) => !open);
-    }
-  };
   const handleItemMenuOpen = (event, id) => {
     event.stopPropagation();
     setItemMenu({ anchorEl: event.currentTarget, id });

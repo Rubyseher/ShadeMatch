@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "../styles/comboSuggestions.css";
 import DominantColor from "./DominantColor";
-import ColorPallet from "./ColorPallet";
+import ColorPallet from "./ColorPallet.tsx";
 import useClosetHistory from "./Utilities/useClosetHistory";
 
 export default function ComboSuggestions({ imageFile }) {

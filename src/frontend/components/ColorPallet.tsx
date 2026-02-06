@@ -3,16 +3,37 @@ import "../styles/comboSuggestions.css";
 import ToggleButtons from "./Utilities/ToggleButtons";
 import MenWomanToggle from "./Utilities/MenWomanToggle";
 
-export default function ColorPallet({ loading, error, neutrals, myntraLinks, colorApiPalette }) {
+interface ColorLineProps {
+  name: string;
+  hex: string;
+}
+interface NeutralItem {
+  name: string;
+  hex: string;
+}
+
+interface MyntraLink {
+  url: string;
+  title: string;
+  category: string;
+}
+interface ColorPalletProps {
+  loading: boolean;
+  error: string | null;
+  neutrals: Record<string, NeutralItem[]> | null;
+  myntraLinks: MyntraLink[];
+  colorApiPalette: Record<string, string[]> | null;
+}
+export default function ColorPallet({ loading, error, neutrals, myntraLinks, colorApiPalette }: ColorPalletProps) {
   const [selectedCategory, setSelectedCategory] = useState("shoes");
   const [selectedMode, setSelectedMode] = useState("analogic");
 
-  const categoryOptions = [
+  const categoryOptions: { value: string; label: string }[] = [
     { value: "tops", label: "Tops" },
     { value: "bottoms", label: "Bottoms" },
     { value: "shoes", label: "Shoes" },
   ];
-  const modeOptions = [
+  const modeOptions: { value: string; label: string }[] = [
     { value: "analogic", label: "analogic" },
     { value: "analogic-complement", label: "Analogic Complement" },
     { value: "complement", label: "Complement" },
@@ -22,10 +43,10 @@ export default function ColorPallet({ loading, error, neutrals, myntraLinks, col
     { value: "quad", label: "Quad" },
     { value: "triad", label: "Triad" },
   ];
-console.log("colorApiPalette",colorApiPalette);
+  console.log("colorApiPalette", colorApiPalette);
 
   const filteredLinks = myntraLinks.filter((l) => l.category === selectedCategory);
-  const ColorLine = ({ name, hex }) => {
+  const ColorLine = ({ name, hex }: ColorLineProps) => {
     if (!name) return null;
     return (
       <li className="combo-line">
@@ -45,18 +66,20 @@ console.log("colorApiPalette",colorApiPalette);
             <div className="flex mt-2.5">
               <ToggleButtons
                 value={selectedCategory}
-                options={categoryOptions}
-                onChange={(v) => setSelectedCategory(v)}
+                options={categoryOptions as any}
+                onChange={(v: string) => setSelectedCategory(v)}
                 wrap={false}
                 center={false}
               />
-              <MenWomanToggle sx={{ m: 1 }} defaultChecked />
+              <div className="m-1">
+                <MenWomanToggle defaultChecked />
+              </div>
             </div>
 
             <h3 className="section-title">NEUTRALS</h3>
             {selectedCategory && (
               <ul className="combos-list">
-                {(neutrals[selectedCategory] || []).map((item) => (
+                {(neutrals?.[selectedCategory] || []).map((item: NeutralItem) => (
                   <ColorLine key={`${selectedCategory}-${item.hex}`} name={item.name} hex={item.hex} />
                 ))}
               </ul>
@@ -70,10 +93,10 @@ console.log("colorApiPalette",colorApiPalette);
           <div className="myntra-section ">
             <h3 className="section-title">MORE COMBINATIONS</h3>
             <div className="toggle-row">
-              <ToggleButtons value={selectedMode} options={modeOptions} onChange={(v) => setSelectedMode(v)} wrap center />
+              <ToggleButtons value={selectedMode} options={modeOptions as any} onChange={(v: string) => setSelectedMode(v)} wrap center />
             </div>
             <ul className="combos-list">
-              {(colorApiPalette[selectedMode] || []).map((hex) => (
+              {(colorApiPalette?.[selectedMode] || []).map((hex: string) => (
                 <li key={`${selectedMode}-${hex}`} className="combo-line">
                   <span className="combo-chip" style={{ backgroundColor: hex }} />
                   <span className="combo-hex">{hex}</span>
